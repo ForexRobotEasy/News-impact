@@ -1,0 +1,101 @@
+mql5
+//+------------------------------------------------------------------+
+//|                                               News Impact.mq5   |
+//|             Copyright 2022, Forex Robot Easy Team               |
+//|                        https://www.forexroboteasy.com             |
+//+------------------------------------------------------------------+
+
+//+------------------------------------------------------------------+
+//|                            Global Variables                       |
+//+------------------------------------------------------------------+
+int newsImpactChart; // Chart ID for the News Impact chart
+
+//+------------------------------------------------------------------+
+//|                        Custom Indicator Inputs                     |
+//+------------------------------------------------------------------+
+input int Period = 5; // Period for summarizing news values
+input ENUM_TIMEFRAMES Timeframe = PERIOD_M1; // Timeframe for summarizing news values
+
+//+------------------------------------------------------------------+
+//|                     Custom Indicator Functions                    |
+//+------------------------------------------------------------------+
+
+// Function to categorize news values as positive, negative, or neutral
+ENUM_NEWS_IMPACT CategorizeNews(double value) {
+    if (value > 0) {
+        return NEWS_IMPACT_POSITIVE;
+    } else if (value < 0) {
+        return NEWS_IMPACT_NEGATIVE;
+    } else {
+        return NEWS_IMPACT_NEUTRAL;
+    }
+}
+
+// Function to calculate the summarized news values for a selected period
+double SummarizeNewsValues(int period) {
+    double summarizedValue = 0;
+    for (int i = 0; i < period; i++) {
+        summarizedValue += iCustom(NULL, Timeframe, 'NewsIndicator', i);
+    }
+    return summarizedValue;
+}
+
+// Function to assign importance levels (high, medium, or low) to summarized news values
+ENUM_NEWS_IMPORTANCE AssignImportanceLevel(double summarizedValue) {
+    if (summarizedValue > 100) {
+        return NEWS_IMPORTANCE_HIGH;
+    } else if (summarizedValue > 50) {
+        return NEWS_IMPORTANCE_MEDIUM;
+    } else {
+        return NEWS_IMPORTANCE_LOW;
+    }
+}
+
+// Function to generate a pie chart to present the summarized news values and importance levels
+void GeneratePieChart(double summarizedValue, ENUM_NEWS_IMPORTANCE importanceLevel) {
+    // Generate pie chart using summarizedValue and importanceLevel
+    // Display the pie chart on the News Impact chart
+}
+
+//+------------------------------------------------------------------+
+//|                      Trading Functions                            |
+//+------------------------------------------------------------------+
+
+// Function to make trading decisions based on the pie chart
+void MakeTradingDecisions() {
+    // Implement trading logic based on the pie chart
+}
+
+//+------------------------------------------------------------------+
+//|                          Initialization                            |
+//+------------------------------------------------------------------+
+int OnInit() {
+    // Create the News Impact chart
+    newsImpactChart = ChartCreate('News Impact', 0, 0, 600, 400, 0);
+    return(INIT_SUCCEEDED);
+}
+
+//+------------------------------------------------------------------+
+//|                          Deinitialization                          |
+//+------------------------------------------------------------------+
+void OnDeinit(const int reason) {
+    // Delete the News Impact chart
+    ChartClose(newsImpactChart);
+}
+
+//+------------------------------------------------------------------+
+//|                             Start                                  |
+//+------------------------------------------------------------------+
+void OnStart() {
+    // Summarize news values for the selected period
+    double summarizedValue = SummarizeNewsValues(Period);
+    
+    // Assign importance level to the summarized news values
+    ENUM_NEWS_IMPORTANCE importanceLevel = AssignImportanceLevel(summarizedValue);
+    
+    // Generate pie chart to present the summarized news values and importance level
+    GeneratePieChart(summarizedValue, importanceLevel);
+    
+    // Make trading decisions based on the pie chart
+    MakeTradingDecisions();
+}
